@@ -1,20 +1,17 @@
 "use client";
 
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
-import { Eye, EyeOff, Hospital, Loader2, LockKeyhole, User } from "lucide-react";
+import { Hospital, Loader2, LockKeyhole, User } from "lucide-react";
 import { z } from "zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import styles from "./login.module.css";
 import { useAuth } from "@/hook/useAuth";
-
+import CInput from "@/components/ui/custom_ui/CInput";
 
 // Zod form schema
 const formSchema = z.object({
@@ -27,7 +24,8 @@ type FormSchemaType = z.infer<typeof formSchema>;
 export default function LoginPage()
 {
 
-  const [showPassword, setShowPassword] = useState(false);
+
+
 
   const { login } = useAuth();
   const router = useRouter();
@@ -86,7 +84,7 @@ export default function LoginPage()
           <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
             <fieldset disabled={isLoading} className="space-y-6">
               {/* ------Username Field------ */}
-              <Controller
+              {/* <Controller
                 control={form.control}
                 name="username"
                 render={({ field }) => (
@@ -106,9 +104,21 @@ export default function LoginPage()
                     </FieldContent>
                   </Field>
                 )}
+              /> */}
+
+              <CInput
+                control={form.control}
+                name="username"
+                label="Username"
+                placeholder="Enter username"
+                type="text"
+                icon={User}
+                disabled={isLoading}
+                className="w-full"
               />
+
               {/* ------Password Field------ */}
-              <Controller
+              {/* <Controller
                 control={form.control}
                 name="password"
                 render={({ field }) => (
@@ -137,7 +147,19 @@ export default function LoginPage()
                     </FieldContent>
                   </Field>
                 )}
+              /> */}
+
+              <CInput
+                control={form.control}
+                name="password"
+                label="Password"
+                placeholder="Enter your password"
+                type="password"
+                icon={LockKeyhole}
+                disabled={isLoading}
+                className="w-full"
               />
+
             </fieldset>
           </form>
         </CardContent>
