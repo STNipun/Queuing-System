@@ -15,10 +15,11 @@ export function useAuth()
     const signup = async (
         username: string,
         password: string,
-        displayName: string
+        firstName: string,
+        lastName: string
     ) =>
     {
-        return signUp({ username, password, displayName });
+        return signUp({ username, password, first_name: firstName, last_name: lastName });
     };
 
     const logout = async () =>

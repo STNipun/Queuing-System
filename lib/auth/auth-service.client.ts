@@ -13,7 +13,7 @@ export async function signIn(
 {
     try
     {
-        const response = await fetch("api/login", {
+        const response = await fetch("/api/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -73,7 +73,7 @@ export async function signOut(): Promise<AuthResponse>
 {
     try
     {
-        const response = await fetch("api/logout", {
+        const response = await fetch("/api/logout", {
             method: "POST",
             credentials: "include"
         });

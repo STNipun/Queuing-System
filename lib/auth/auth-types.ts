@@ -16,7 +16,8 @@ export interface SignUpCredentials
 {
     username: string;
     password: string;
-    displayName: string;
+    first_name: string;
+    last_name: string;
 }
 
 export interface AuthResponse
