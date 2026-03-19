@@ -41,8 +41,10 @@ function getRoleDashboard(role: string | undefined): string
 {
     switch (role)
     {
+        case "admin": return "/admin/users";
         case "doctor": return "/doctor";
         case "front_desk": return "/fornt-desk";
+        case "user": return "/";
         default: return "/";
     }
 }
