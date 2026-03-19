@@ -16,10 +16,17 @@ export function useAuth()
         username: string,
         password: string,
         firstName: string,
-        lastName: string
+        lastName: string,
+        role?: "admin" | "doctor" | "front_desk" | "user"
     ) =>
     {
-        return signUp({ username, password, first_name: firstName, last_name: lastName });
+        return signUp({
+            username,
+            password,
+            first_name: firstName,
+            last_name: lastName,
+            role,
+        });
     };
 
     const logout = async () =>

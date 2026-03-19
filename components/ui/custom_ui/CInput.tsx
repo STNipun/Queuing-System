@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
-import
-{
-    InputGroup,
-    InputGroupAddon,
-    InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { LucideIcon } from "lucide-react";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";

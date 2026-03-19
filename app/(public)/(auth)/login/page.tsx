@@ -6,7 +6,6 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -24,9 +23,6 @@ type FormSchemaType = z.infer<typeof formSchema>;
 export default function LoginPage()
 {
 
-
-
-
   const { login } = useAuth();
   const router = useRouter();
 
@@ -43,6 +39,18 @@ export default function LoginPage()
 
   const isLoading = isSubmitting || isRedirecting;
 
+  const getRoleRedirect = (role?: string): string =>
+  {
+    switch (role)
+    {
+      case "admin": return "/admin/users";
+      case "doctor": return "/doctor";
+      case "front_desk": return "/fornt-desk";
+      case "user": return "/";
+      default: return "/";
+    }
+  };
+
   const onSubmit = async (values: FormSchemaType) =>
   {
     try
@@ -52,7 +60,7 @@ export default function LoginPage()
       if (result.success)
       {
         setIsRedirecting(true);
-        router.push("/dashboard")
+        router.push(getRoleRedirect(result.user?.role));
         router.refresh();
       }
       else
@@ -180,11 +188,8 @@ export default function LoginPage()
             )}
           </Button>
           <div>
-            <p>
-              Don't have an account?{" "}
-              <Link className="text-primary hover:underline" href="/signup">
-                Sign Up
-              </Link>
+            <p className="text-sm text-muted-foreground">
+              Account creation is managed by administrators. Contact your clinic admin for access.
             </p>
           </div>
         </CardFooter>

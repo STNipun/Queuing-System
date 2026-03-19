@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -13,10 +7,29 @@ datasource db {
   provider = "mysql"
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
+model user {
+  id         Int    @id @default(autoincrement())
+  username   String @unique(map: "User_username_key")
+  password   String
   first_name String
-  last_name String
-  username String @unique
-  password String
+  last_name  String
+  role       String @default("user")
+}
+
+model PatientVisit {
+  id           String   @id @default(cuid())
+  patientName  String
+  age          Int
+  gender       String
+  visitDate    DateTime
+  visitTime    String
+  visitType    String
+  diagnosis    String
+  prescription String
+  status       String
+  notes        String
+  allergies    String?
+  bloodType    String?
+  gp           String?
+  createdAt    DateTime @default(now())
 }
