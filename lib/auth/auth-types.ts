@@ -3,7 +3,8 @@ export interface AuthUser
     uid: string;
     username: string | null;
     displayName: string | null;
-    usernameVerified?: boolean;
+    emailVerified?: boolean;
+    role?: string;
 }
 
 export interface LoginCredentials
@@ -18,6 +19,7 @@ export interface SignUpCredentials
     password: string;
     first_name: string;
     last_name: string;
+    role?: "admin" | "doctor" | "front_desk" | "user";
 }
 
 export interface AuthResponse

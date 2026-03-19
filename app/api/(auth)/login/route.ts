@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { authProvider } from "@/lib/auth/auth-provider";
+import { checkRateLimit, getClientIdentifier } from "@/lib/security/rate-limit";
 
-const logingSchema = z.object({
+const loginSchema = z.object({
     username: z.string().min(1, "Username is required"),
     password: z.string().min(1, "Password is required")
 });
@@ -16,7 +15,7 @@ export async function POST(req: NextRequest)
     {
         const body = await req.json();
 
-        const parsed = logingSchema.safeParse(body);
+        const parsed = loginSchema.safeParse(body);
         if (!parsed.success)
         {
             return NextResponse.json(
@@ -26,55 +25,51 @@ export async function POST(req: NextRequest)
         }
 
         const { username, password } = parsed.data;
+        const identifier = getClientIdentifier(req, username);
 
-        const user = await prisma.user.findUnique({
-            where: { username },
+        const rateLimitResult = await checkRateLimit({
+            namespace: "auth:login",
+            identifier,
+            limit: 5,
+            window: "10 m",
         });
 
-        if (!user)
+        if (!rateLimitResult.success)
         {
+            const retryAfterSeconds = Math.max(1, Math.ceil((rateLimitResult.reset - Date.now()) / 1000));
             return NextResponse.json(
-                { error: 'Invalid username or password' },
-                { status: 401 }
+                { error: "Too many login attempts. Please try again later." },
+                {
+                    status: 429,
+                    headers: { "Retry-After": String(retryAfterSeconds) },
+                }
             );
         }
 
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch)
+        const result = await authProvider.signIn(username, password);
+        if (!result.success || !result.user || !result.token)
         {
             return NextResponse.json(
-                { error: 'Invalid username or password' },
+                { error: result.error ?? "Invalid username or password" },
                 { status: 401 }
             );
         }
-
-        const token = jwt.sign(
-            { id: user.id, username: user.username },
-            process.env.JWT_SECRET!,
-            { expiresIn: "7d" }
-        );
-
-
-        const { password: _, ...userWithoutPassword } = user;
 
         const response = NextResponse.json(
             {
                 message: "Login successful",
-                user: userWithoutPassword
+                user: result.user
             },
             { status: 200 }
         );
 
-        if (token)
-        {
-            response.cookies.set("auth_token", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
-                maxAge: 60 * 60 * 24 * 7,
-                path: "/",
-            });
-        }
+        response.cookies.set("auth-token", result.token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 60 * 60 * 24 * 7,
+            path: "/",
+        });
 
         return response;
     } catch (error)

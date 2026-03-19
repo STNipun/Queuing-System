@@ -8,18 +8,20 @@ export function authMiddleware(req: NextRequest)
 
     const PUBLIC_ROUTES = ["/login", "/signup"];
     const isPublic = PUBLIC_ROUTES.some(
-        route => pathname === route || pathname.startsWith(`${route}/`)
+        (route) => pathname === route || pathname.startsWith(`${route}/`)
     );
 
-    // Not logging in -> redirect
-    if (!token && isPublic)
+    // Not logged in and trying to access protected routes -> redirect
+    if (!token && !isPublic)
     {
         return NextResponse.redirect(new URL("/login", req.url));
     }
 
     // Already logged in -> redirect to dashboard
-    if (token && (pathname.startsWith("/login") || pathname.startsWith("/signup")))
+    if (token && isPublic)
     {
         return NextResponse.redirect(new URL("/dashboard", req.url));
     }
+
+    return NextResponse.next();
 }

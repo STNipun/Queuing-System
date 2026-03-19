@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from '@/lib/prisma';
-import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { authProvider } from "@/lib/auth/auth-provider";
+import { getCurrentUser } from "@/lib/auth/auth-service.server";
+import { checkRateLimit, getClientIdentifier } from "@/lib/security/rate-limit";
 
 const registerSchema = z.object({
     first_name: z.string().min(1, "First name is required"),
     last_name: z.string().min(1, "Last name is required"),
     username: z.string().min(1, "Username is required"),
-    password: z.string().min(1, "Password is required")
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    role: z.enum(["admin", "doctor", "front_desk", "user"]).optional(),
 });
 
 
@@ -15,77 +17,87 @@ export async function POST(req: NextRequest)
 {
     try
     {
+        const currentUser = await getCurrentUser();
+        if (!currentUser)
+        {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
+        if (currentUser.role !== "admin")
+        {
+            return NextResponse.json(
+                { error: "Forbidden" },
+                { status: 403 }
+            );
+        }
+
         const body = await req.json();
 
-        const parsed = registerSchema.safeParse(body)
+        const parsed = registerSchema.safeParse(body);
 
         if (!parsed.success)
         {
             return NextResponse.json(
                 { error: parsed.error.flatten().fieldErrors },
                 { status: 422 }
-            )
+            );
         }
 
-        const { first_name, last_name, username, password } = parsed.data;
+        const { first_name, last_name, username, password, role } = parsed.data;
+        const identifier = getClientIdentifier(req, username);
 
-        if (!first_name || !last_name || !username || !password)
-        {
-            return NextResponse.json(
-                { message: "All fields are required" },
-                { status: 400 }
-            )
-        }
-
-        if (password.length < 8)
-        {
-            return NextResponse.json(
-                { message: "password must be at least 8 characters." },
-                { status: 400 }
-            )
-        }
-
-        const existingUser = await prisma.user.findUnique({
-            where: { username },
+        const rateLimitResult = await checkRateLimit({
+            namespace: "auth:signup",
+            identifier,
+            limit: 5,
+            window: "15 m",
         });
 
-        if (existingUser)
+        if (!rateLimitResult.success)
         {
             return NextResponse.json(
-                { message: "Email is already in use." },
-                { status: 409 }
-            )
+                { error: "Too many account creation attempts. Please try again later." },
+                { status: 429 }
+            );
         }
 
-        const hashedPassword = await bcrypt.hash(password, 12);
+        const result = await authProvider.signUp(
+            username,
+            password,
+            first_name,
+            last_name,
+            role
+        );
 
-        const user = await prisma.user.create({
-            data: {
-                first_name,
-                last_name,
-                username,
-                password: hashedPassword
-            }
-        });
+        if (!result.success || !result.user)
+        {
+            return NextResponse.json(
+                { error: result.error ?? "Unable to create user" },
+                { status: 400 }
+            );
+        }
 
         return NextResponse.json(
             {
                 message: "User registered successfully",
                 user: {
-                    id: user.id,
-                    username: user.username,
-                    displayName: `${user.first_name} ${user.last_name}`,
-                    usernameVerified: true
+                    uid: result.user.uid,
+                    username: result.user.username,
+                    displayName: result.user.displayName,
+                    role: result.user.role,
                 }
             },
             { status: 201 }
-        )
+        );
     } catch (error)
     {
         console.error('[REGISTER_ERROR]', error);
         return NextResponse.json(
-            { message: "Internal server error" },
+            { error: "Internal server error" },
             { status: 500 }
-        )
+        );
     }
 }
