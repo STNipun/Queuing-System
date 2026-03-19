@@ -4,7 +4,7 @@ import { Users } from "lucide-react";
 
 export default async function FrontDeskPage()
 {
-    await requireRole(["front_desk", "admin"]);
+    await requireRole(["front_desk"]);
 
     // TODO: replace with real DB query, e.g. prisma.patient.count({ where: { date: today } })
     const patientCount = 0;
