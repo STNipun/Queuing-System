@@ -18,6 +18,7 @@ model user {
 
 model PatientVisit {
   id           String   @id @default(cuid())
+  patientId    Int?
   patientName  String
   age          Int
   gender       String
@@ -32,4 +33,37 @@ model PatientVisit {
   bloodType    String?
   gp           String?
   createdAt    DateTime @default(now())
+  patient      Patient? @relation(fields: [patientId], references: [id])
+}
+
+model Patient {
+  id           Int    @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  age          Int
+  gender       String
+  contactPhone String?
+  email        String?
+  allergies    String?
+  bloodType    String?
+  gp           String?
+  notes        String?
+  createdAt    DateTime @default(now())
+  visits       PatientVisit[]
+  appointments Appointment[]
+}
+
+model Appointment {
+  id              Int      @id @default(autoincrement())
+  appointmentNumber String @unique
+  patientId       Int?
+  patientName     String
+  contactPhone    String
+  email           String?
+  appointmentDate DateTime
+  appointmentTime String
+  reason          String?
+  status          String   @default("scheduled")
+  createdAt       DateTime @default(now())
+  patient         Patient? @relation(fields: [patientId], references: [id])
 }

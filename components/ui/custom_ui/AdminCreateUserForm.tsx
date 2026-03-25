@@ -96,7 +96,7 @@ export function AdminCreateUserForm({ onSuccess }: AdminCreateUserFormProps)
                     type="text"
                     icon={User}
                     disabled={isSaving}
-                    className="w-full"
+                    className="w-full bg-white/50 dark:bg-slate-900/50 focus-within:bg-white/70 focus-within:dark:bg-slate-900/70 transition-colors duration-200"
                 />
 
                 <CInput
@@ -107,7 +107,7 @@ export function AdminCreateUserForm({ onSuccess }: AdminCreateUserFormProps)
                     type="text"
                     icon={User}
                     disabled={isSaving}
-                    className="w-full"
+                    className="w-full bg-white/50 dark:bg-slate-900/50 focus-within:bg-white/70 focus-within:dark:bg-slate-900/70 transition-colors duration-200"
                 />
             </div>
 
@@ -119,7 +119,7 @@ export function AdminCreateUserForm({ onSuccess }: AdminCreateUserFormProps)
                 type="text"
                 icon={Mail}
                 disabled={isSaving}
-                className="w-full"
+                className="w-full bg-white/50 dark:bg-slate-900/50 focus-within:bg-white/70 focus-within:dark:bg-slate-900/70 transition-colors duration-200"
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -131,7 +131,7 @@ export function AdminCreateUserForm({ onSuccess }: AdminCreateUserFormProps)
                     type="password"
                     icon={LockKeyhole}
                     disabled={isSaving}
-                    className="w-full"
+                    className="w-full bg-white/50 dark:bg-slate-900/50 focus-within:bg-white/70 focus-within:dark:bg-slate-900/70 transition-colors duration-200"
                 />
 
                 <div className="space-y-2">
@@ -140,7 +140,7 @@ export function AdminCreateUserForm({ onSuccess }: AdminCreateUserFormProps)
                     </label>
                     <select
                         id="role"
-                        className="w-full h-10 rounded-md border border-black/12 dark:border-white/12 bg-white/70 dark:bg-slate-900/50 px-3 text-sm"
+                        className="w-full h-10 rounded-md border border-black/12 dark:border-white/12 bg-white/70 dark:bg-slate-900/50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200"
                         disabled={isSaving}
                         {...form.register("role")}
                     >
