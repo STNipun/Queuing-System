@@ -1,6 +1,6 @@
 export interface AuthUser
 {
-    uid: string;
+    id: number;
     username: string | null;
     displayName: string | null;
     emailVerified?: boolean;

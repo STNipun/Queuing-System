@@ -8,12 +8,53 @@ datasource db {
 }
 
 model user {
-  id         Int    @id @default(autoincrement())
-  username   String @unique(map: "User_username_key")
-  password   String
-  first_name String
-  last_name  String
-  role       String @default("user")
+  id           Int           @id @default(autoincrement())
+  username     String        @unique(map: "User_username_key")
+  password     String
+  first_name   String
+  last_name    String
+  role         String        @default("user")
+  appointments Appointment[]
+}
+
+model Patient {
+  id           Int           @id @default(autoincrement())
+  name         String
+  age          Int
+  mobile       String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  appointments Appointment[]
+
+  @@index([mobile])
+}
+
+model Appointment {
+  id              String   @id @default(cuid())
+  queueNumber     Int
+
+  // Doctor relationship
+  doctorId        Int
+  doctor          user     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  // Patient relationship
+  patientId       Int
+  patient         Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  // Appointment details
+  appointmentDate DateTime
+  appointmentTime String
+
+  // Status tracking
+  status          String   @default("scheduled")
+
+  // Metadata
+  createdAt       DateTime @default(now())
+  createdBy       Int?
+
+  @@index([appointmentDate])
+  @@index([doctorId])
+  @@index([patientId])
 }
 
 model PatientVisit {

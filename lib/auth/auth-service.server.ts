@@ -43,7 +43,7 @@ function getRoleDashboard(role: string | undefined): string
     {
         case "admin": return "/admin/users";
         case "doctor": return "/doctor";
-        case "front_desk": return "/fornt-desk";
+        case "front_desk": return "/front-desk";
         case "user": return "/";
         default: return "/";
     }

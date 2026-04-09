@@ -20,17 +20,17 @@ export function PatientCountCard({
             {/* Background glow blob */}
             <div
                 aria-hidden="true"
-                className="absolute -top-6 -right-6 size-28 rounded-full bg-gradient-to-br from-blue-600 to-indigo-500 opacity-10 blur-2xl pointer-events-none"
+                className="absolute -top-6 -right-6 size-28 rounded-full bg-linear-to-br from-blue-600 to-indigo-500 opacity-10 blur-2xl pointer-events-none"
             />
 
             {/* Icon */}
-            <div className="shrink-0 size-14 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-800 to-indigo-500 shadow-[0_4px_14px_rgba(99,102,241,0.35)]">
+            <div className="shrink-0 size-14 rounded-xl flex items-center justify-center bg-linear-to-br from-blue-800 to-indigo-500 shadow-[0_4px_14px_rgba(99,102,241,0.35)]">
                 {children}
             </div>
 
             {/* Text */}
             <div className="flex flex-col gap-0.5 min-w-0">
-                <span className="text-4xl font-bold tabular-nums tracking-tight bg-gradient-to-br from-blue-800 to-indigo-500 bg-clip-text text-transparent dark:from-blue-400 dark:to-violet-400">
+                <span className="text-4xl font-bold tabular-nums tracking-tight bg-linear-to-br from-blue-800 to-indigo-500 bg-clip-text text-transparent dark:from-blue-400 dark:to-violet-400">
                     {count}
                 </span>
                 <span className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">

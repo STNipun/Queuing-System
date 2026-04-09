@@ -92,7 +92,7 @@ class CustomAuthProvider implements IAuthProvider
             return {
                 success: true,
                 user: {
-                    uid: String(user.id),
+                    id: user.id,
                     username: user.username,
                     displayName: `${user.first_name} ${user.last_name}`,
                     role: user.role,
@@ -144,7 +144,7 @@ class CustomAuthProvider implements IAuthProvider
             return {
                 success: true,
                 user: {
-                    uid: String(user.id),
+                    id: user.id,
                     username: user.username,
                     displayName: `${user.first_name} ${user.last_name}`,
                     role: user.role,
@@ -176,7 +176,7 @@ class CustomAuthProvider implements IAuthProvider
             return {
                 success: true,
                 user: {
-                    uid: String(user.id),
+                    id: user.id,
                     username: user.username,
                     displayName: `${user.first_name} ${user.last_name}`,
                     role: user.role,

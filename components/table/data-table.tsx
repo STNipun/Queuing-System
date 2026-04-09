@@ -31,6 +31,7 @@ interface DataTableProps<TData, TValue>
   totalRows?: number
   tableClassName?: string
   children?: React.ReactNode
+  meta?: Record<string, unknown>
 }
 
 export function DataTable<TData, TValue>({
@@ -53,7 +54,8 @@ export function DataTable<TData, TValue>({
   isLoading,
   totalRows,
   tableClassName,
-  children
+  children,
+  meta
 }: DataTableProps<TData, TValue>)
 {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -80,6 +82,7 @@ export function DataTable<TData, TValue>({
       onView,
       onEdit,
       onDelete,
+      ...meta,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
